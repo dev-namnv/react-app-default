@@ -7,9 +7,10 @@ import '../assets/css/font-google.css'
 // import 'bootstrap/dist/css/bootstrap.css.map'
 
 // Js admin
-import '../assets/js/sb-admin-2.min.js'
-import '../assets/vendor/bootstrap/js/bootstrap.bundle.min.js'
-import 'jquery-easing/dist/jquery.easing.1.3.umd.min'
+import 'jquery'
+import 'bootstrap/dist/js/bootstrap.bundle'
+import 'jquery-easing'
+import '../assets/js/sb-admin-2'
 
 // Layouts
 import Sidebar from './Sidebar'

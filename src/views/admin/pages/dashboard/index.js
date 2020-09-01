@@ -1,6 +1,10 @@
-import React from 'react'
+import React, {useEffect} from 'react'
+import $ from "jquery";
 
 const Dashboard = props => {
+  useEffect(() => {
+    $("html, body").stop().animate({scrollTop: 0}, 300, 'swing');
+  }, [])
     return (
         <div className="container-fluid">
         {/* Page Heading */}

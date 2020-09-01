@@ -2,30 +2,42 @@ import React, {useState, useEffect} from 'react'
 import * as Toastr from "toastr"
 import 'toastr/build/toastr.min.css'
 
-import CategoryApi from '../../../../api/category'
-import {Link} from "react-router-dom";
+import BookApi from '../../../../api/book'
+import ChapterApi from '../../../../api/chapter'
+import {Link, useParams} from "react-router-dom";
 import $ from "jquery";
 
-const CategoryManager = props => {
-    const [categories, setCategories] = useState([])
+const ChapterManager = () => {
+    const {id} = useParams()
+    const [chapters, setChapters] = useState([])
+    const [book, setBook] = useState({})
 
     // Get data
     useEffect(() => {
         $("html, body").stop().animate({scrollTop: 0}, 300, 'swing');
-        const getCategories = async () => {
-            return await CategoryApi.all()
+        const getChapters = async () => {
+            return await BookApi.getChapters(id)
         }
-        getCategories().then(({data}) => setCategories(data))
-    }, [])
+        const getBook = async () => {
+            return await BookApi.find(id)
+        }
+        getChapters().then(({data}) => setChapters(data))
+        getBook().then(({data}) => setBook(data))
+    }, [id])
 
     // Remove record
     const onHandleRemove = id => {
-        CategoryApi.remove(id).then(({status}) => {
+        $('.spinner-border').show()
+        ChapterApi.remove(id).then(({status}) => {
+            $('.spinner-border').hide()
             status === 200 ? Toastr.info('Successfully', 'Deleted!') : Toastr.error('An error occurred. Please try again later', 'Error!')
         })
+        BookApi.removeChapterId(book._id, JSON.stringify({chapter_remove: id})).then(({status}) => {
+            status === 200 ? Toastr.info('Removed relationship') : Toastr.error('Cant remove relationship')
+        })
 
-        const newCategories = categories.filter(cate => cate._id !== id)
-        setCategories(newCategories)
+        const newChapter = chapters.filter(cate => cate._id !== id)
+        setChapters(newChapter)
     }
 
     return (
@@ -37,7 +49,7 @@ const CategoryManager = props => {
             {/* DataTales Example */}
             <div className="card shadow mb-4">
                 <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">Data Categories</h6>
+                    <h6 className="m-0 font-weight-bold text-primary">{book !== null ? 'Data Chapters for ' + book.name : 'Cant found book'}</h6>
                 </div>
                 <div className="card-body">
                     <div className="table-responsive">
@@ -46,8 +58,6 @@ const CategoryManager = props => {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Books</th>
-                                <th>Desc</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -55,21 +65,16 @@ const CategoryManager = props => {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Books</th>
-                                <th>Desc</th>
                                 <th>Action</th>
                             </tr>
                             </tfoot>
                             <tbody>
-                            {categories.map(({_id, name, book_id, description}, key) => (
+                            {chapters.map(({_id, name}, key) => (
                                 <tr key={key}>
                                     <td>#{_id}</td>
-                                    <td className="btn-link"><Link to={`/admin/category/${_id}/books`}>{name}</Link></td>
-                                    <td>{book_id.length ?? 0}</td>
-                                    <td dangerouslySetInnerHTML={{__html: description}} style={{whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "200px", maxHeight: "50px"}}/>
+                                    <td className="btn-link"><Link to={`/admin/chapter/${_id}`}>{name}</Link></td>
                                     <td className="align-content-center">
-                                        <Link className="btn btn-primary" to={`/admin/category/${_id}/book/add`}><i className="far fa-plus-square" /></Link>
-                                        <Link className="btn btn-info ml-lg-3" to={`/admin/category/edit/${_id}`}><i className="fas fa-edit" /></Link>
+                                        <Link className="btn btn-info" to={`/admin/chapter/${_id}`}><i className="fas fa-edit" /></Link>
                                         <button className="btn btn-danger ml-lg-3" onClick={() => { if (window.confirm('Delete this item ?')) onHandleRemove(_id) }}><i className="fas fa-trash-alt" /></button>
                                     </td>
                                 </tr>
@@ -83,6 +88,6 @@ const CategoryManager = props => {
     )
 }
 
-CategoryManager.propTypes = {}
+ChapterManager.propTypes = {}
 
-export default CategoryManager
+export default ChapterManager
