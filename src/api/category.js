@@ -20,25 +20,10 @@ const remove = id => {
     return http.delete(`/api/categories/delete/${id}`)
 }
 
-const getBooks = id => {
-    return http.get(`/api/categories/${id}/books`);
-}
-
-const addBookId = (category_id, data) => {
-    return http.patch(`/api/categories/${category_id}/book/add`, data)
-}
-
-const removeBookId = (category_id, data) => {
-    return http.patch(`/api/categories/${category_id}/book/remove`, data)
-}
-
 export default {
     all,
     find,
     create,
     update,
-    remove,
-    getBooks,
-    addBookId,
-    removeBookId
+    remove
 }

@@ -8,10 +8,6 @@ const CategorySchema = mongoose.Schema({
     description: {
         type: String,
         required: true
-    },
-    book_id: {
-        type: Array,
-        required: false
     }
 }, {
     timestamps: true,

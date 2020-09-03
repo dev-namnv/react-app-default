@@ -9,7 +9,7 @@ import $ from "jquery";
 const BookManager = () => {
     const {cate_id} = useParams()
     const [books, setBooks] = useState([])
-    const [category, setCategory] = useState({})
+    const [category, setCategory] = useState(null)
 
     // Fetch data
     useEffect(() => {
@@ -23,7 +23,7 @@ const BookManager = () => {
         // get books
         const getBooks = async () => {
             if (cate_id !== undefined) {
-                return await CategoryApi.getBooks(cate_id)
+                return await BookApi.getByCategory(cate_id)
             } else {
                 return await BookApi.all()
             }
@@ -37,13 +37,9 @@ const BookManager = () => {
         const removeBook = async () => {
             return await BookApi.remove(id)
         }
-        const removeBookIdInCategory = async (cate_id) => {
-            return await CategoryApi.removeBookId(cate_id, id)
-        }
         const newBooks = books.filter(book => book._id !== id)
         setBooks(newBooks)
         removeBook().then(({status}) => status === 200 ? Toastr.success('Delete book successfully') : Toastr.error('Error while remove book'))
-        removeBookIdInCategory().then(({status}) => status === 200 ? Toastr.success('Delete relationship successfully') : Toastr.error('Error while remove relationship'))
     }
 
     return (
@@ -55,7 +51,8 @@ const BookManager = () => {
             {/* DataTales Example */}
             <div className="card shadow mb-4">
                 <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">{category.id !== undefined ? `Data books for ${category.name}` : 'Data books' }</h6>
+
+                    <h6 className="m-0 font-weight-bold text-primary">{category !== null && cate_id !== undefined ? `Data books for ${category.name}` : 'Data books' }</h6>
                 </div>
                 <div className="card-body">
                     <div className="table-responsive">
@@ -64,7 +61,6 @@ const BookManager = () => {
                             <tr>
                                 <th>Name</th>
                                 <th>Image</th>
-                                <th>Chapters</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
                                 <th>Buy only</th>
@@ -76,7 +72,6 @@ const BookManager = () => {
                             <tr>
                                 <th>Name</th>
                                 <th>Image</th>
-                                <th>Chapters</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
                                 <th>Buy only</th>
@@ -85,11 +80,10 @@ const BookManager = () => {
                             </tr>
                             </tfoot>
                             <tbody>
-                            {books.map(({id, name, feature_image, chapter_id, price, quantity, buy_only, is_active}, key) => (
+                            {books.map(({id, name, feature_image, price, quantity, buy_only, is_active}, key) => (
                                 <tr key={key}>
                                     <td><Link to={`/admin/book/${id}/chapters`}>{name}</Link></td>
                                     <td><img style={{maxHeight: 100}} src={feature_image} alt=""/></td>
-                                    <td>{chapter_id !== [] ? chapter_id.length : 0}</td>
                                     <td>{price}</td>
                                     <td>{quantity}</td>
                                     <td>{buy_only ? <small className="badge badge-success">Buy open</small> : <small className="badge badge-dark">Buy close</small>}</td>

@@ -1,5 +1,9 @@
 import http from './config'
 
+const getByBook = book_id => {
+    return http.get(`/api/chapter/book/${book_id}`)
+}
+
 const find = id => {
     return http.get(`/api/chapter/${id}`)
 }
@@ -21,4 +25,5 @@ export default {
     create,
     update,
     remove,
+    getByBook
 }

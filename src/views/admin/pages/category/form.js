@@ -10,7 +10,7 @@ import $ from 'jquery'
 const CategoryForm = () => {
     const History = useHistory()
     const {id} = useParams()
-    const [defaultValue, setDefaultValue] = useState({})
+    const [defaultValue, setDefaultValue] = useState(null)
 
     useEffect(() => {
         $("html, body").stop().animate({scrollTop: 0}, 300, 'swing');
@@ -70,7 +70,7 @@ const CategoryForm = () => {
                         type="text"
                         className="form-control form-control-solid"
                         placeholder="Enter full name"
-                        defaultValue={defaultValue.name}
+                        defaultValue={defaultValue !== null ? defaultValue.name : ''}
                         ref={register({
                             required: true,
                             minLength: 2
@@ -80,7 +80,7 @@ const CategoryForm = () => {
                 <div className="form-group">
                     <label>Subscription</label>
                     <Editor
-                        value={defaultValue.description}
+                        value={defaultValue !== null ? defaultValue.description : ''}
                         init={{
                             height: 300,
                             menubar: false,

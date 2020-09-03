@@ -77,6 +77,9 @@ const Routers = () => {
                             <Route path="/book/:id/chapters">
                                 <BookChapters />
                             </Route>
+                            <Route path="/book/:id/chapter/:chapter_id">
+                                <BookChapters />
+                            </Route>
 
                             <Route path="/404-not-found" exact>
                                 <Error404 />

@@ -9,10 +9,6 @@ const BookSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    chapter_id: {
-        type: Array,
-        required: false
-    },
     price: {
         type: Number,
         required: true
@@ -31,6 +27,11 @@ const BookSchema = mongoose.Schema({
         type: Boolean,
         required: true,
         default: 1
+    },
+    category_id: {
+        type: String,
+        required: true,
+        default: null
     }
 }, {
     timestamps: true,

@@ -8,6 +8,11 @@ const ChapterSchema = mongoose.Schema({
     content: {
         type: String,
         required: true
+    },
+    book_id: {
+        type: String,
+        required: true,
+        default: null
     }
 }, {
     timestamps: true

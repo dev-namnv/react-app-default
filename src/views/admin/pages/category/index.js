@@ -46,7 +46,6 @@ const CategoryManager = props => {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Books</th>
                                 <th>Desc</th>
                                 <th>Action</th>
                             </tr>
@@ -55,17 +54,15 @@ const CategoryManager = props => {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Books</th>
                                 <th>Desc</th>
                                 <th>Action</th>
                             </tr>
                             </tfoot>
                             <tbody>
-                            {categories.map(({_id, name, book_id, description}, key) => (
+                            {categories.map(({_id, name, description}, key) => (
                                 <tr key={key}>
                                     <td>#{_id}</td>
                                     <td className="btn-link"><Link to={`/admin/category/${_id}/books`}>{name}</Link></td>
-                                    <td>{book_id.length ?? 0}</td>
                                     <td dangerouslySetInnerHTML={{__html: description}} style={{whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "200px", maxHeight: "50px"}}/>
                                     <td className="align-content-center">
                                         <Link className="btn btn-primary" to={`/admin/category/${_id}/book/add`}><i className="far fa-plus-square" /></Link>

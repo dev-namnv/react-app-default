@@ -28,7 +28,7 @@ const Home = () => {
             <div className="album py-5 bg-light">
                 <div className="container">
                     <div className="row">
-                        {books.map(({id, name, feature_image, chapter_id}, key) => (
+                        {books.map(({id, name, feature_image}, key) => (
                             <div className="col-md-4" key={key}>
                                 <div className="card mb-4 box-shadow">
                                     <img className="card-img-top" alt="Thumbnail [100%x225]" style={{height: '225px', width: '100%', display: 'block'}} src={feature_image} data-holder-rendered="true" />
@@ -38,7 +38,6 @@ const Home = () => {
                                             <div className="btn-group">
                                                 <Link to={`book/${id}/chapters`} className="btn btn-sm btn-outline-secondary">View</Link>
                                             </div>
-                                            <small className="text-muted">Chapters: {chapter_id.length ?? 0}</small>
                                         </div>
                                     </div>
                                 </div>

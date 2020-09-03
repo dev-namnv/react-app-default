@@ -1,6 +1,6 @@
 let express  = require('express')
 const Category = require('../models/category')
-const Book     = require('../models/book')
+// const Book     = require('../models/book')
 
 const router = express.Router();
 
@@ -41,7 +41,7 @@ router.get('/:id', async (req, res) => {
         const category = await Category.findById(req.params.id)
         res.json(category)
     } catch (error) {
-        res.json({})
+        res.json(null)
     }
 })
 
@@ -56,18 +56,7 @@ router.delete('/delete/:id', async (req, res) => {
     }
 })
 
-// Get list book
-router.get('/:id/books', async (req, res) => {
-    try {
-        const {book_id} = await Category.findById(req.params.id)
-        let books = await Book.find({_id: {$in: book_id}})
-        res.json(books)
-    } catch (error) {
-        res.json([])
-    }
-})
-
-// Insert book/ api/category/${category_id}/book/add
+/*// Insert book/ api/category/${category_id}/book/add
 router.patch('/:id/book/add', async (req, res) => {
     try {
         const {book_id} = await Category.findById(req.params.id)
@@ -95,7 +84,7 @@ router.patch('/:id/book/remove', async (req, res) => {
     } catch (error) {
         res.json({message: error})
     }
-})
+})*/
 
 module.exports = router
 

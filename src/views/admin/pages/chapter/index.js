@@ -16,7 +16,7 @@ const ChapterManager = () => {
     useEffect(() => {
         $("html, body").stop().animate({scrollTop: 0}, 300, 'swing');
         const getChapters = async () => {
-            return await BookApi.getChapters(id)
+            return await ChapterApi.getByBook(id)
         }
         const getBook = async () => {
             return await BookApi.find(id)
@@ -28,12 +28,12 @@ const ChapterManager = () => {
     // Remove record
     const onHandleRemove = id => {
         $('.spinner-border').show()
-        ChapterApi.remove(id).then(({status}) => {
+        const removeChapter = async () => {
+            return await ChapterApi.remove(id)
+        }
+        removeChapter().then(({status}) => {
             $('.spinner-border').hide()
             status === 200 ? Toastr.info('Successfully', 'Deleted!') : Toastr.error('An error occurred. Please try again later', 'Error!')
-        })
-        BookApi.removeChapterId(book._id, JSON.stringify({chapter_remove: id})).then(({status}) => {
-            status === 200 ? Toastr.info('Removed relationship') : Toastr.error('Cant remove relationship')
         })
 
         const newChapter = chapters.filter(cate => cate._id !== id)

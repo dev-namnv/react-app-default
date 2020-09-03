@@ -11,9 +11,9 @@ import $ from 'jquery'
 const ChapterForm = () => {
     const History = useHistory()
     const {id, book_id} = useParams()
-    const [defaultValue, setDefaultValue] = useState({})
+    const [validBook, setValidBook] = useState(null)
+    const [defaultValue, setDefaultValue] = useState(null)
     const [content, setContent] = useState()
-    const [validBook, setValidBook] = useState({})
 
     useEffect(() => {
         // Scroll to top
@@ -29,7 +29,12 @@ const ChapterForm = () => {
         const getChapterEdit = async () => {
             return await ChapterApi.find(id)
         }
-        getChapterEdit().then(({data}) => setDefaultValue(data))
+        getChapterEdit().then(({data}) => {
+            setDefaultValue(data)
+            if (data !== null) {
+                setContent(data.content)
+            }
+        })
     }, [book_id, id])
 
     const { register, handleSubmit, errors } = useForm();
@@ -43,8 +48,9 @@ const ChapterForm = () => {
             ...data,
             content
         }
-
-        if (validBook._id !== undefined) { // if Valid book
+        console.log('New data: ', newData)
+        if (validBook !== null) { // if Valid book
+            newData.book_id = validBook._id
             ChapterApi.create(newData).then(({status, data}) => {
                 $('.spinner-border').hide()
                 if (status === 200) {
@@ -53,10 +59,10 @@ const ChapterForm = () => {
                 } else {
                     Toastr.error('Error white create new record', 'Error')
                 }
-                BookApi.addChapter(validBook._id, JSON.stringify(data)).then(r => console.log(r))
             })
-        } else if(defaultValue !== {} && id !== undefined) { // If valid chapter
+        } else if(defaultValue !== null && id !== undefined) { // If valid chapter
             // Update
+            newData.book_id = defaultValue.book_id
             ChapterApi.update(id, newData).then(({status}) => {
                 $('.spinner-border').hide()
                 if (status === 200) {
@@ -67,15 +73,15 @@ const ChapterForm = () => {
                 }
             })
         } else { // Invalid
-            // $('.spinner-border').show()
+            $('.spinner-border').hide()
             Toastr.error('Book id is invalid!', 'Error')
         }
     }
 
     const title = () => {
-        if (validBook._id !== undefined) {
+        if (validBook !== null) {
             return 'Add chapter for ' + validBook.name
-        } else if (defaultValue._id !== undefined) {
+        } else if (defaultValue !== null) {
             return 'Edit ' + defaultValue.name
         } else {
             return 'Cant found book'
@@ -95,7 +101,7 @@ const ChapterForm = () => {
                         type="text"
                         className="form-control form-control-solid"
                         placeholder="Enter full name"
-                        defaultValue={defaultValue.name}
+                        defaultValue={defaultValue !== null ? defaultValue.name : ''}
                         ref={register({
                             required: true,
                             minLength: 2
@@ -105,7 +111,7 @@ const ChapterForm = () => {
                 <div className="form-group">
                     <label>Subscription</label>
                     <Editor
-                        value={defaultValue.content}
+                        initialValue={defaultValue !== null ? defaultValue.content : ''}
                         init={{
                             height: 1000,
                             menubar: false,

@@ -13,10 +13,10 @@ import $ from "jquery";
 const BookForm = () => {
     const History = useHistory()
     const {id, cate_id} = useParams()
-    const [category, setCategory] = useState({})
-    const [valueEdit, setValueEdit] = useState({})
-    let [buyOnly, setBuyOnly] = useState(valueEdit.buy_only ?? true)
-    let [isActive, setIsActive] = useState(valueEdit.is_active ?? true)
+    const [category, setCategory] = useState(null)
+    const [valueEdit, setValueEdit] = useState(null)
+    let [buyOnly, setBuyOnly] = useState(valueEdit !== null ? valueEdit.buy_only : true)
+    let [isActive, setIsActive] = useState(valueEdit !== null ? valueEdit.is_active : true)
 
     useEffect(() => {
         $("html, body").stop().animate({scrollTop: 0}, 300, 'swing');
@@ -56,7 +56,8 @@ const BookForm = () => {
         }
 
         // Action
-        if (category._id !== undefined) {
+        if (category !== null) {
+            newData.category_id = category._id
             if (file !== undefined) {
                 $('input[type="file"]').addClass('invalid')
                 let storageRef = firebase.storage().ref(`images/${file.name}`)
@@ -65,6 +66,7 @@ const BookForm = () => {
                         // Tạo object mới chứa toàn bộ thông tin từ input
                         newData.feature_image = url
                         // Post
+                        console.log('Create new data', newData)
                         BookApi.create(newData).then(({status, data}) => { // Post and response
                             $('.spinner-border').hide()
                             if (status === 200) {
@@ -73,7 +75,6 @@ const BookForm = () => {
                             } else {
                                 Toastr.error('Error white create new record', 'Error')
                             }
-                            CategoryApi.addBookId(cate_id, data)
                         })
                     })
                 });
@@ -83,12 +84,13 @@ const BookForm = () => {
                 $('input[type="file"]').addClass('is-invalid')
                 return false
             }
-        } else if (valueEdit._id !== undefined) {
+        } else if (valueEdit !== null) {
             if (file !== undefined) { // If not put image firebase so get image from defaultValue
                 let storageRef = firebase.storage().ref(`images/${file.name}`)
                 storageRef.put(file).then(function () {
                     storageRef.getDownloadURL().then(url => {
                         newData.feature_image = url // Set url to feature image
+                        console.log('Update a record with Image', newData)
                         BookApi.update(id, newData).then(data => { // Put update book
                             $('.spinner-border').hide()
                             if (data.status === 200) {
@@ -102,6 +104,7 @@ const BookForm = () => {
                 });
             } else {
                 newData.feature_image = valueEdit.feature_image
+                console.log('Update a record without Image', newData)
                 BookApi.update(id, newData).then(data => { // Put update book
                     $('.spinner-border').hide()
                     if (data.status === 200) {
@@ -114,13 +117,14 @@ const BookForm = () => {
             }
         } else {
             Toastr.error('Category is invalid!', 'Error')
+            $('.spinner-border').hide()
         }
     }
 
     return (
         <form className="form" onSubmit={handleSubmit(onHandleSubmit)}>
             <div className="card-body">
-                <h5>{category._id !== undefined ? 'Add book for ' + category.name : 'Category not found'}</h5>
+                <h5>{category !== null ? 'Add book for ' + category.name : 'Category not found'}</h5>
             </div>
             <div className="card-body">
                 <div className="form-group">
@@ -128,7 +132,7 @@ const BookForm = () => {
                     <input
                         type="text"
                         name="name"
-                        defaultValue={valueEdit.name}
+                        defaultValue={valueEdit !== null ? valueEdit.name : ''}
                         ref={register({required: true, minLength: 1})}
                         className={errors.name ? "form-control is-invalid" : "form-control"}
                         placeholder="Enter email"/>
@@ -149,13 +153,13 @@ const BookForm = () => {
                         </div>
                     </div>
                 </div>
-                <img src={valueEdit.feature_image ?? ''} alt=""/>
+                <img src={valueEdit !== null ? valueEdit.feature_image : ''} alt=""/>
                 <div className="form-group">
                     <label>Price <span className="text-danger">*</span></label>
                     <input
                         type="number"
                         name="price"
-                        defaultValue={valueEdit.price}
+                        defaultValue={valueEdit !== null ? valueEdit.price : 0}
                         ref={register({required: true, min: 0})}
                         className={errors.price ? "form-control is-invalid" : "form-control"}
                         placeholder="Price"/>
@@ -166,7 +170,7 @@ const BookForm = () => {
                     <input
                         type="number"
                         name="quantity"
-                        defaultValue={valueEdit.quantity}
+                        defaultValue={valueEdit !== null ? valueEdit.quantity : 0}
                         ref={register({required: true, min: 0})}
                         className={errors.quantity ? "form-control is-invalid" : "form-control"}
                         placeholder="Quantity"/>

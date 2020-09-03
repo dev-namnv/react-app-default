@@ -4,6 +4,10 @@ const all = () => {
     return http.get('/api/books')
 }
 
+const getByCategory = cate_id => {
+    return http.get(`/api/books/category/${cate_id}`)
+}
+
 const find = id => {
     return http.get(`/api/books/${id}`)
 }
@@ -20,25 +24,11 @@ const remove = id => {
     return http.delete(`/api/books/delete/${id}`)
 }
 
-const getChapters = id => {
-    return http.get(`/api/books/${id}/chapters`)
-}
-
-const addChapter = (book_id, data) => {
-    return http.patch(`/api/books/${book_id}/chapter/add`, data)
-}
-
-const removeChapterId = (book_id, data) => {
-    return http.patch(`/api/books/${book_id}/chapter/remove`, data)
-}
-
 export default {
     all,
     find,
     create,
     update,
     remove,
-    getChapters,
-    addChapter,
-    removeChapterId
+    getByCategory
 }
